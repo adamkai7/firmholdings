@@ -1,0 +1,35 @@
+name: Daily Excel Download
+
+on:
+  schedule:
+    # Runs every day at 8:00 AM UTC (adjust as needed)
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Allows you to trigger it manually to test
+
+jobs:
+  download-and-save:
+    runs-on: ubuntu-latest
+    
+    # Grants the action permission to push the file back to your repo
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Excel File
+        # REPLACE THE URL BELOW with the actual link to your Excel file
+        run: |
+          curl -o downloaded_data.xlsx "https://example.com/path/to/the/file.xlsx"
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add downloaded_data.xlsx
+          
+          # This prevents the action from crashing if the file hasn't changed since yesterday
+          git commit -m "Automated daily download of Excel file" || echo "No changes to commit"
+          
+          git push
