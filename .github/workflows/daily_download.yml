@@ -2,9 +2,8 @@ name: Daily ARK Holdings Download
 
 on:
   schedule:
-    # Runs every day at 8:00 AM UTC
     - cron: '0 8 * * *'
-  workflow_dispatch: # Allows manual triggering to test it anytime
+  workflow_dispatch: 
 
 jobs:
   download-and-save:
@@ -25,9 +24,12 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Pull latest changes from the repo to prevent push conflicts
+          git pull origin main --rebase
+          
           git add arkk_holdings.csv
           
-          # Prevents the workflow from failing if the data hasn't updated since yesterday
           git commit -m "Automated daily download of ARKK holdings" || echo "No changes to commit"
           
           git push
