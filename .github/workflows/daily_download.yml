@@ -25,11 +25,14 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Pull latest changes from the repo to prevent push conflicts
-          git pull origin main --rebase
-          
+          # 1. Stage the new file
           git add arkk_holdings.csv
           
+          # 2. Commit the file FIRST (this makes the workspace "clean")
           git commit -m "Automated daily download of ARKK holdings" || echo "No changes to commit"
           
+          # 3. Pull any outside changes safely (rebase works now!)
+          git pull origin main --rebase
+          
+          # 4. Push to the repository
           git push
