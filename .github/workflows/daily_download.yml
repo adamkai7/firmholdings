@@ -1,16 +1,15 @@
-name: Daily Excel Download
+name: Daily ARK Holdings Download
 
 on:
   schedule:
-    # Runs every day at 8:00 AM UTC (adjust as needed)
+    # Runs every day at 8:00 AM UTC
     - cron: '0 8 * * *'
-  workflow_dispatch: # Allows you to trigger it manually to test
+  workflow_dispatch: # Allows manual triggering to test it anytime
 
 jobs:
   download-and-save:
     runs-on: ubuntu-latest
     
-    # Grants the action permission to push the file back to your repo
     permissions:
       contents: write 
 
@@ -18,18 +17,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download Excel File
-        # REPLACE THE URL BELOW with the actual link to your Excel file
+      - name: Download ARKK CSV File
         run: |
-          curl -o downloaded_data.xlsx "https://example.com/path/to/the/file.xlsx"
+          curl -o arkk_holdings.csv "https://assets.ark-funds.com/fund-documents/funds-etf-csv/ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv"
 
       - name: Commit and Push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add downloaded_data.xlsx
+          git add arkk_holdings.csv
           
-          # This prevents the action from crashing if the file hasn't changed since yesterday
-          git commit -m "Automated daily download of Excel file" || echo "No changes to commit"
+          # Prevents the workflow from failing if the data hasn't updated since yesterday
+          git commit -m "Automated daily download of ARKK holdings" || echo "No changes to commit"
           
           git push
